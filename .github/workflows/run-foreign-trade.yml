@@ -9,6 +9,8 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -27,3 +29,20 @@ jobs:
       - name: Run foreign-trade script
         run: python foreign-trade.py
 
+      - name: Commit updated CSV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add foreign_trade_by_month.csv
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update foreign_trade_by_month.csv [skip ci]"
+            git push
+          fi
+
+      - name: Upload CSV artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: foreign-trade-by-month
+          path: foreign_trade_by_month.csv
