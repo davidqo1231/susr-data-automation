@@ -1,0 +1,29 @@
+name: Run foreign trade script
+
+on:
+  schedule:
+    # GitHub Actions používa UTC; 08:05 UTC = 09:05 CET
+    - cron: "5 8 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run foreign-trade script
+        run: python foreign-trade.py
+
